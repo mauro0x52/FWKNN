@@ -1,0 +1,6 @@
+data/models/*
+data/predictive/*
+data/results/*
+data/target/*
+data/weather/*
+node_modules/*
