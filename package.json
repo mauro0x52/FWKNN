@@ -1,0 +1,17 @@
+{
+  "name": "fwknn",
+  "description": "A Feature Weighting algorithm based on K-Nearest Neighbors.",
+  "version": "0.0.1",
+  "contributors": [
+    "Mauro Ribeiro <mauro0x52@gmail.com>"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mauro0x52/fwknn.js"
+  },
+  "author": "Mauro Ribeiro",
+  "dependencies": {
+    "csv-parse": "^1.0.0"
+  }
+}
