@@ -20,27 +20,31 @@ var start = function () {
 }
 
 var runSeason = function (season) {
-    dataManager.load(config.data.predictive, config.seasons[season], function (predictiveData) {
-        dataManager.load(config.data.weather, config.seasons[season], function (weatherData) {
-            dataManager.load(config.data.target, config.seasons[season], function (targetData) {
-                var joined = dataManager.join(weatherData, targetData);
-                joined.target = dataManager.removeDates(joined.target);
-                var weights = fs.readFileSync(config.data.resultsFolder + '/weights.csv').toString().split('\n')[Number(season)+1].split(',');
-                for (var i in weights) weights[i] = Number(weights[i]);
-                for (var j in predictiveData) {                    
-                    var model = Knn();
-                    model.data = joined.weather;
-                    model.results = joined.target;
-                    model.k = config.algorithm.k;
-                    model.maxDistance = config.algorithm.maxDistance;
-                    model.weights = weights;
-                    var prediction = model.run(predictiveData[j]);
-                    predictions[season].push([predictiveData[j][0], prediction]); 
-                }
-                responses--;
-                if (responses == 0) saveResults();
+    dataManager.load(config.data.weather, config.seasons[season], function (weatherData) {
+        dataManager.normalize(weatherData, function(weatherData, minmax) {
+            dataManager.load(config.data.predictive, config.seasons[season], function (predictiveData) {
+                dataManager.normalizePreDefined(predictiveData, minmax, function (predictiveData) {
+                    dataManager.load(config.data.target, config.seasons[season], function (targetData) {
+                        var joined = dataManager.join(weatherData, targetData);
+                        joined.target = dataManager.removeDates(joined.target);
+                        var weights = fs.readFileSync(config.data.resultsFolder + '/weights.csv').toString().split('\n')[Number(season)+1].split(',');
+                        for (var i in weights) weights[i] = Number(weights[i]);
+                        for (var j in predictiveData) {                    
+                            var model = Knn();
+                            model.data = joined.weather;
+                            model.results = joined.target;
+                            model.k = config.algorithm.k;
+                            model.maxDistance = config.algorithm.maxDistance;
+                            model.weights = weights;
+                            var prediction = model.run(predictiveData[j]);
+                            predictions[season].push([predictiveData[j][0], prediction]); 
+                        }
+                        responses--;
+                        if (responses == 0) saveResults();
+                    });
+                });
             });
-        });
+        }
     });
 }
 

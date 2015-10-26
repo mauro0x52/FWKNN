@@ -20,6 +20,43 @@ DataManager.load = function (file, months, cb) {
         cb(data);
     });
 }
+
+/**
+ * normalize every attribute to fit values from 0 to 1
+ */ 
+DataManager.normalize = function (data, cb) {
+    var min = Array();
+    var max = Array();
+    for (var j in data[0]) {
+        min.push(Infinity);
+        max.push(-Infinity);
+    }
+    for (var i in data) {
+        for (var j = 1; j < data[i].length; j++) {
+            if (data[i][j] > max[j]) max[j] = data[i][j];
+            if (data[i][j] < min[j]) min[j] = data[i][j];
+        }
+    }
+    DataManager.normalizePreDefined(data, { min : min, max : max }, function (data) {
+        cb(data, { min : min, max : max }); 
+    });
+}
+
+/**
+ * normalize by pre-defined normalization params
+ */
+DataManager.normalizePreDefined = function (data, minmax, cb) {
+    for (var i in data) {
+        for (var j = 1; j < data[i].length; j++) {
+            if (minmax.max[j] - minmax.min[j] != 0) {
+                data[i][j] = (data[i][j] - minmax.min[j]) / (minmax.max[j] - minmax.min[j]);
+            }
+        }
+    }
+    
+    cb(data);
+}
+
 /**
  * join weather and target to have the same dates
  */

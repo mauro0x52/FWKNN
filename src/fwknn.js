@@ -228,30 +228,23 @@ var runFwknn = function (X, Y, cb) {
         console.log(wstr, best.error.relativeMean);
         
         console.log();
-        console.log('Round ' + round + ' best normalized:');
-        var nwstr = '';
-        var rangeWeights = [];
-        for (var wi in weight) {
-            for (var ws in selectedAttributes) {
-                if (selectedAttributes[ws].newIndex == wi) {
-                    rangeWeights.push(weight[wi] * selectedAttributes[ws].range); 
-                    break;
-                }
-            }
+        console.log('Normalized weights:');
+        var wstr = '';
+        var normalizedWeights = [];
+        var maxWeight = Math.max.apply(null, weight);
+        for (var wi in weight) { 
+            normalizedWeights[wi] = weight[wi]/maxWeight;
+            wstr += normalizedWeights[wi].toFixed(config.algorithm.showDecimals) + ' ';
         }
-        var maxRangeWeights = Math.max.apply(null, rangeWeights);
-        for (var wi in weight) {
-            rangeWeights[wi] = rangeWeights[wi]/maxRangeWeights;
-            nwstr += rangeWeights[wi].toFixed(config.algorithm.showDecimals) + ' ';
-        }
-        console.log(nwstr);
+        console.log(wstr);
+        console.log();
     } 
     
     cb({
         attributes : attributesList,
         error: best.error.relativeMean,
         weights : weight,
-        rangeWeights : rangeWeights,
+        normalizedWeights : normalizedWeights,
         data : shuffled.X,
         target : shuffled.Y,
         results : train.results

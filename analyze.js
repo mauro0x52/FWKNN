@@ -43,7 +43,7 @@ var saveResults = function (responses) {
             for (var i in responses) {
                 var index = responses[i].report.attributes.indexOf(a);
                 if (index > -1) {
-                    str += ','+responses[i].report.rangeWeights[index];
+                    str += ','+responses[i].report.normalizedWeights[index];
                 } else {
                     str += ',';
                 }

@@ -6,12 +6,14 @@ process.on('message', function (m) {
     var segment = m.segment;
     
     dataManager.load(config.data.weather, config.seasons[segment], function (weatherData) {
-        dataManager.load(config.data.target, config.seasons[segment], function (targetData) {
-            var joined = dataManager.join(weatherData, targetData);
-            joined.target = dataManager.removeDates(joined.target);
-            fwknn(joined.weather, joined.target, function (report) {
-                process.send({ report : report });
-                process.exit();
+        dataManager.normalize(weatherData, function(weatherData, multipliers) {
+            dataManager.load(config.data.target, config.seasons[segment], function (targetData) {
+                var joined = dataManager.join(weatherData, targetData);
+                joined.target = dataManager.removeDates(joined.target);
+                fwknn(joined.weather, joined.target, function (report) {
+                    process.send({ report : report });
+                    process.exit();
+                });
             });
         });
     });
