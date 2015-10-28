@@ -40,7 +40,7 @@ var runSeason = function (season) {
                             predictions[season].push([predictiveData[j][0], prediction]); 
                         }
                         responses--;
-                        if (responses == 0) saveResults();
+                        if (responses == 0) saveResults(predictions);
                     });
                 });
             });
@@ -48,7 +48,7 @@ var runSeason = function (season) {
     });
 }
 
-var saveResults = function () {
+var saveResults = function (predictions) {
     var results = [];
     for (var i in predictions) {
         for (var j in predictions[i]) {
